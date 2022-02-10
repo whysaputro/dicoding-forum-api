@@ -33,7 +33,7 @@ describe('a NewThread entities', () => {
     expect(() => new NewThread(payload)).toThrowError('NEW_THREAD.TITLE_LIMIT_CHAR');
   });
 
-  it('should create registerUser object correctly', () => {
+  it('should create newThread object correctly', () => {
     // Arrange
     const payload = {
       title: 'Sebuah Judul',
