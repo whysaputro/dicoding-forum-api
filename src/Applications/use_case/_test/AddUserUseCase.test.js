@@ -34,13 +34,13 @@ describe('AddUserUseCase', () => {
       .mockImplementation(() => Promise.resolve(expectedRegisteredUser));
 
     /** creating use case instance */
-    const getUserUseCase = new AddUserUseCase({
+    const addUserUseCase = new AddUserUseCase({
       userRepository: mockUserRepository,
       passwordHash: mockPasswordHash,
     });
 
     // Action
-    const registeredUser = await getUserUseCase.execute(useCasePayload);
+    const registeredUser = await addUserUseCase.execute(useCasePayload);
 
     // Assert
     expect(registeredUser).toStrictEqual(expectedRegisteredUser);

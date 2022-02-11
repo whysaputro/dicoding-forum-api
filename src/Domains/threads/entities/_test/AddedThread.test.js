@@ -5,7 +5,7 @@ describe('a AddedThread entities', () => {
     // Arrange
     const payload = {
       id: 'abc',
-      title: 'Sebuah judul'
+      title: 'Sebuah judul',
     };
 
     // Action and Assert

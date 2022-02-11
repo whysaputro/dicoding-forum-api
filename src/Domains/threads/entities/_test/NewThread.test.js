@@ -16,21 +16,11 @@ describe('a NewThread entities', () => {
     const payload = {
       title: 123,
       body: true,
+      owner: {},
     };
 
     // Action and Assert
     expect(() => new NewThread(payload)).toThrowError('NEW_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION');
-  });
-
-  it('should throw error when title contains more than 50 character', () => {
-    // Arrange
-    const payload = {
-      title: 'sebuahjudulsebuahjudulsebuahjudulsebuahjudulsebuahjudulsebuahjudulsebuahjudulsebuahjudulsebuahjudulsebuahjudul',
-      body: 'sebuah content',
-    };
-
-    // Action and Assert
-    expect(() => new NewThread(payload)).toThrowError('NEW_THREAD.TITLE_LIMIT_CHAR');
   });
 
   it('should create newThread object correctly', () => {
@@ -38,13 +28,15 @@ describe('a NewThread entities', () => {
     const payload = {
       title: 'Sebuah Judul',
       body: 'Sebuah content',
+      owner: 'user-123',
     };
 
     // Action
-    const { title, body } = new NewThread(payload);
+    const { title, body, owner } = new NewThread(payload);
 
     // Assert
     expect(title).toEqual(payload.title);
     expect(body).toEqual(payload.body);
+    expect(owner).toEqual(payload.owner);
   });
 });

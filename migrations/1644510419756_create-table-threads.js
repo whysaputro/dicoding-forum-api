@@ -1,13 +1,13 @@
 /* eslint-disable camelcase */
 
-exports.up = pgm => {
+exports.up = (pgm) => {
   pgm.createTable('threads', {
     id: {
       type: 'VARCHAR(50)',
       primaryKey: true,
     },
     title: {
-      type: 'VARCHAR(100)',
+      type: 'TEXT',
       notNull: true,
     },
     body: {
@@ -21,16 +21,17 @@ exports.up = pgm => {
     owner: {
       type: 'VARCHAR(50)',
       notNull: true,
-    }
-  })
+    },
+  });
 
   pgm.addConstraint(
     'threads',
-    'fk_threads_owner.users_id',
-    'FOREIGN KEY(owner) REFERENCES users(id) ON DELETE CASCADE'
+    'fk_threads.owner_users.id',
+    'FOREIGN KEY(owner) REFERENCES users(id) ON DELETE CASCADE',
   );
 };
 
-exports.down = pgm => {
-  pgm.dropTable('threads')
+exports.down = (pgm) => {
+  pgm.dropConstraint('threads', 'fk_threads.owner_users.id');
+  pgm.dropTable('threads');
 };
