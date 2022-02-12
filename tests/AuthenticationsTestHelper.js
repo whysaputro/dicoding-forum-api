@@ -3,7 +3,7 @@
 const AutheticationTestHelper = {
   async getAccessTokenHelper(server) {
     /** add user */
-    await server.inject({
+    const responsRegister = await server.inject({
       method: 'POST',
       url: '/users',
       payload: {
@@ -14,7 +14,7 @@ const AutheticationTestHelper = {
     });
 
     /** login with the user that has been created above */
-    const response = await server.inject({
+    const responseLogin = await server.inject({
       method: 'POST',
       url: '/authentications',
       payload: {
@@ -23,8 +23,9 @@ const AutheticationTestHelper = {
       },
     });
 
-    const { data: { accessToken } } = JSON.parse(response.payload);
-    return accessToken;
+    const { data: { addedUser: { id: userId } } } = JSON.parse(responsRegister.payload);
+    const { data: { accessToken } } = JSON.parse(responseLogin.payload);
+    return { userId, accessToken };
   },
 };
 

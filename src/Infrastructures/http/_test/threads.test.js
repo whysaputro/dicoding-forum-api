@@ -44,7 +44,7 @@ describe('/threads endpoint', () => {
         title: 'sebuah thread',
       };
       const server = await createServer(container);
-      const accessToken = await AuthenticationTestHelper.getAccessTokenHelper(server);
+      const { accessToken } = await AuthenticationTestHelper.getAccessTokenHelper(server);
 
       // Action
       const response = await server.inject({
@@ -72,7 +72,7 @@ describe('/threads endpoint', () => {
       };
 
       const server = await createServer(container);
-      const accessToken = await AuthenticationTestHelper.getAccessTokenHelper(server);
+      const { accessToken } = await AuthenticationTestHelper.getAccessTokenHelper(server);
 
       // Action
       const response = await server.inject({
@@ -100,7 +100,7 @@ describe('/threads endpoint', () => {
       };
 
       const server = await createServer(container);
-      const accessToken = await AuthenticationTestHelper.getAccessTokenHelper(server);
+      const { accessToken } = await AuthenticationTestHelper.getAccessTokenHelper(server);
 
       // Action
       const response = await server.inject({
