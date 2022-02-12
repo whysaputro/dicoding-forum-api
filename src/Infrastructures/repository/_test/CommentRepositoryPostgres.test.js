@@ -85,4 +85,41 @@ describe('CommentRepositoryPostgres', () => {
       }));
     });
   });
+
+  describe('deleteComment function', () => {
+    it('should delete comment by id', async () => {
+      // Arrange
+      const addedComment = {
+        id: 'comment-123',
+        threadId: 'thread-123',
+      };
+
+      await UsersTableTestHelper.addUser({
+        username: 'dicoding',
+        password: 'secret',
+        fullname: 'dicoding',
+      });
+
+      /** add new thread */
+      await ThreadsTableTestHelper.addNewThread({
+        title: 'sebuah thread',
+        body: 'sebuah body thread',
+      });
+
+      /** add comment */
+      await CommentTableTestHelper.addComment({
+        id: 'comment-123',
+        threadId: 'thread-123',
+      });
+
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+
+      // Action
+      await commentRepositoryPostgres.deleteCommentById(addedComment.id);
+      const comment = await CommentTableTestHelper.findCommentById(addedComment.id);
+
+      // Assert
+      expect(comment[0].is_deleted).toEqual(true);
+    });
+  });
 });
