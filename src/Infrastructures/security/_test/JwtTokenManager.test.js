@@ -1,7 +1,6 @@
 const Jwt = require('@hapi/jwt');
 const InvariantError = require('../../../Commons/exceptions/InvariantError');
 const JwtTokenManager = require('../JwtTokenManager');
-const AuthenticationError = require('../../../Commons/exceptions/AuthenticationError');
 
 describe('JwtTokenManager', () => {
   describe('createAccessToken function', () => {
@@ -89,31 +88,6 @@ describe('JwtTokenManager', () => {
       await expect(jwtTokenManager.verifyAccessToken(accessToken))
         .resolves
         .not.toThrow(InvariantError);
-    });
-  });
-
-  describe('get token from header', () => {
-    it('should return token correctly from a header', async () => {
-      // arrange
-      const jwtTokenManager = new JwtTokenManager(Jwt.token);
-      const header = 'Bearer accessToken';
-
-      // action
-      const token = await jwtTokenManager.getTokenFromHeader(header);
-
-      // assert
-      expect(token).toEqual('accessToken');
-    });
-
-    it('should throw error when no header is provided', async () => {
-      // arrange
-      const jwtTokenManager = new JwtTokenManager(Jwt.token);
-      const header = '';
-
-      // action & assert
-      await expect(jwtTokenManager.getTokenFromHeader(header))
-        .rejects
-        .toThrow(AuthenticationError);
     });
   });
 

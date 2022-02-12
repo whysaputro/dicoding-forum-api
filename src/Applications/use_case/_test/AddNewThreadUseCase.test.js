@@ -17,7 +17,6 @@ describe('AddNewThreadUseCase.js', () => {
       owner: 'user-123',
     });
 
-    const headerAuthorization = 'Bearer accessToken';
     const accessToken = 'access_token';
 
     /** creating depedency of use case */
@@ -27,9 +26,6 @@ describe('AddNewThreadUseCase.js', () => {
     /** mocking needed function */
     mockThreadRepository.addNewThread = jest.fn()
       .mockImplementation(() => Promise.resolve(expectedAddedThread));
-
-    mockAuthenticationTokenManager.getTokenFromHeader = jest.fn()
-      .mockImplementation(() => Promise.resolve(accessToken));
     mockAuthenticationTokenManager.verifyAccessToken = jest.fn()
       .mockImplementation(() => Promise.resolve());
     mockAuthenticationTokenManager.decodePayload = jest.fn()
@@ -42,11 +38,10 @@ describe('AddNewThreadUseCase.js', () => {
     });
 
     // Action
-    const addedThread = await addNewThreadUseCase.execute(useCasePayload, headerAuthorization);
+    const addedThread = await addNewThreadUseCase.execute(useCasePayload, accessToken);
 
     // Assert
     expect(addedThread).toStrictEqual(expectedAddedThread);
-    expect(mockAuthenticationTokenManager.getTokenFromHeader).toBeCalledWith(headerAuthorization);
     expect(mockAuthenticationTokenManager.decodePayload).toBeCalledWith(accessToken);
     expect(mockThreadRepository.addNewThread).toBeCalledWith(new NewThread({
       title: useCasePayload.title,
