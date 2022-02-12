@@ -7,9 +7,9 @@ const AutheticationTestHelper = {
       method: 'POST',
       url: '/users',
       payload: {
-        username: 'dicoding',
+        username: 'hendra',
         password: 'secret',
-        fullname: 'Dicoding Indonesia',
+        fullname: 'Hendra Wahyu',
       },
     });
 
@@ -18,7 +18,7 @@ const AutheticationTestHelper = {
       method: 'POST',
       url: '/authentications',
       payload: {
-        username: 'dicoding',
+        username: 'hendra',
         password: 'secret',
       },
     });
