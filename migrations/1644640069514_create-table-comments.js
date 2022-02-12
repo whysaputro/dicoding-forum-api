@@ -6,15 +6,15 @@ exports.up = (pgm) => {
       type: 'VARCHAR(50)',
       primaryKey: true,
     },
-    thread_id: {
-      type: 'VARCHAR(50)',
-      notNull: true,
-    },
     content: {
       type: 'TEXT',
       notNull: true,
     },
     owner: {
+      type: 'VARCHAR(50)',
+      notNull: true,
+    },
+    thread_id: {
       type: 'VARCHAR(50)',
       notNull: true,
     },
@@ -38,7 +38,7 @@ exports.up = (pgm) => {
 };
 
 exports.down = (pgm) => {
-  pgm.dropTable('comments');
   pgm.dropConstraint('comments', 'fk_comments.thread_id_threads.id');
   pgm.dropConstraint('comments', 'fk_comments.owner_users.id');
+  pgm.dropTable('comments');
 };
