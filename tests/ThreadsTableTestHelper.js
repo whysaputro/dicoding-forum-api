@@ -13,6 +13,21 @@ const ThreadsTableTestHelper = {
     return result.rows;
   },
 
+  async addNewThread({
+    id = 'thread-123',
+    title = 'sebuah thread',
+    body = 'sebuah body thread',
+    date = new Date.toString(),
+    owner = 'user-123',
+  }) {
+    const query = {
+      text: 'INSERT INTO comments VALUES($1, $2, $3, $4, $5)',
+      values: [id, title, body, date, owner],
+    };
+
+    await pool.query(query);
+  },
+
   async cleanTable() {
     await pool.query('DELETE FROM threads WHERE 1=1');
   },
