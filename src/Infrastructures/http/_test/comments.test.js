@@ -53,7 +53,7 @@ describe('/threads/{threadId}/comments endpoint', () => {
       // Arrange
       const server = await createServer(container);
       const threadId = 'thread-123';
-      const accessToken = await AuthenticationTestHelper.getAccessTokenHelper(server);
+      const { accessToken } = await AuthenticationTestHelper.getAccessTokenHelper(server);
       const requestPayload = { };
 
       await UsersTableTestHelper.addUser({
@@ -87,7 +87,7 @@ describe('/threads/{threadId}/comments endpoint', () => {
       // Arrange
       const server = await createServer(container);
       const threadId = 'thread-123';
-      const accessToken = await AuthenticationTestHelper.getAccessTokenHelper(server);
+      const { accessToken } = await AuthenticationTestHelper.getAccessTokenHelper(server);
       const requestPayload = {
         content: true,
       };
@@ -123,7 +123,7 @@ describe('/threads/{threadId}/comments endpoint', () => {
       // Arrange
       const server = await createServer(container);
       const threadId = 'thread-123';
-      const accessToken = await AuthenticationTestHelper.getAccessTokenHelper(server);
+      const { accessToken } = await AuthenticationTestHelper.getAccessTokenHelper(server);
       const requestPayload = {
         content: 'sebuah comment',
       };
@@ -155,6 +155,128 @@ describe('/threads/{threadId}/comments endpoint', () => {
       expect(responseJson.data.addedComment.id).toBeDefined();
       expect(responseJson.data.addedComment.content).toBeDefined();
       expect(responseJson.data.addedComment.owner).toBeDefined();
+    });
+  });
+
+  describe('when DELETE /threads/{threadId}/comments/{commentId}', () => {
+    it('should response with 401 when no access token provided ', async () => {
+      // Arrange
+      const server = await createServer(container);
+      const threadId = 'thread-123';
+      const commentId = 'comment-123';
+
+      // Action
+      const response = await server.inject({
+        method: 'DELETE',
+        url: `/threads/${threadId}/comments/${commentId}`,
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(responseJson.statusCode).toEqual(401);
+      expect(responseJson.error).toEqual('Unauthorized');
+      expect(responseJson.message).toEqual('Missing authentication');
+    });
+
+    it('should response with 404 when comments not found', async () => {
+      // Arrange
+      const server = await createServer(container);
+      const threadId = 'thread-123';
+      const commentId = 'comment-123';
+      const { accessToken } = await AuthenticationTestHelper.getAccessTokenHelper(server);
+
+      await UsersTableTestHelper.addUser({
+        id: 'user-123',
+      });
+
+      await ThreadsTableTestHelper.addNewThread({
+        id: threadId,
+        owner: 'user-123',
+      });
+
+      // Action
+      const response = await server.inject({
+        method: 'DELETE',
+        url: `/threads/${threadId}/comments/${commentId}`,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(404);
+      expect(responseJson.status).toEqual('fail');
+      expect(responseJson.message).toEqual('comment tidak ditemukan');
+    });
+
+    it('should response with 403 when no access to delete the comment', async () => {
+      // Arrange
+      const server = await createServer(container);
+      const threadId = 'thread-123';
+      const commentId = 'comment-123';
+      const { accessToken } = await AuthenticationTestHelper.getAccessTokenHelper(server);
+
+      await UsersTableTestHelper.addUser({
+        id: 'user-123',
+      });
+
+      await ThreadsTableTestHelper.addNewThread({
+        id: threadId,
+        owner: 'user-123',
+      });
+
+      await CommentTableTestHelper.addComment({
+        id: commentId,
+        owner: 'user-123',
+      });
+
+      // Action
+      const response = await server.inject({
+        method: 'DELETE',
+        url: `/threads/${threadId}/comments/${commentId}`,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(403);
+      expect(responseJson.status).toEqual('fail');
+      expect(responseJson.message).toEqual('anda tidak memiliki akses untuk menghapus komen ini');
+    });
+
+    it('should response with 200 when delete comment correctly', async () => {
+      // Arrange
+      const server = await createServer(container);
+      const threadId = 'thread-123';
+      const commentId = 'comment-123';
+      const { accessToken, userId } = await AuthenticationTestHelper.getAccessTokenHelper(server);
+
+      await ThreadsTableTestHelper.addNewThread({
+        id: threadId,
+        owner: userId,
+      });
+
+      await CommentTableTestHelper.addComment({
+        id: commentId,
+        owner: userId,
+      });
+
+      // Action
+      const response = await server.inject({
+        method: 'DELETE',
+        url: `/threads/${threadId}/comments/${commentId}`,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual('success');
     });
   });
 });
