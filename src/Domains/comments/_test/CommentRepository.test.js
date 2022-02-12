@@ -8,5 +8,7 @@ describe('CommentRepository interface', () => {
     // Action & Assert
     expect(() => commentRepository.addNewComment({}))
       .rejects.toThrowError('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+    expect(() => commentRepository.deleteCommentById({}))
+      .rejects.toThrowError('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   });
 });
