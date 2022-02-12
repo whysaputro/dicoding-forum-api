@@ -4,8 +4,9 @@ const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 const NewComment = require('../../../Domains/comments/entities/NewComment');
 const AddedComment = require('../../../Domains/comments/entities/AddedComment');
-const pool = require('../../database/postgres/pool');
 const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
+const AuthorizationError = require('../../../Commons/exceptions/AuthorizationError');
+const pool = require('../../database/postgres/pool');
 
 describe('CommentRepositoryPostgres', () => {
   afterEach(async () => {
@@ -164,6 +165,68 @@ describe('CommentRepositoryPostgres', () => {
         commentId: 'comment-123',
         threadId: 'thread-123',
       })).resolves.not.toThrowError(NotFoundError);
+    });
+  });
+
+  describe('verifyCommentAccess function', () => {
+    it('should throw AuthorizationError when you no access to delete the comment', async () => {
+      // Arrange
+      /** add user */
+      await UsersTableTestHelper.addUser({
+        username: 'dicoding',
+        password: 'secret',
+        fullname: 'dicoding',
+      });
+
+      /** add new thread */
+      await ThreadsTableTestHelper.addNewThread({
+        title: 'sebuah thread',
+        body: 'sebuah body thread',
+      });
+
+      /** add comment */
+      await CommentTableTestHelper.addComment({
+        id: 'comment-123',
+        threadId: 'thread-123',
+      });
+
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+
+      // Action & Assert
+      expect(() => commentRepositoryPostgres.verifyCommentAccess({
+        commentId: 'comment-123',
+        owner: 'user-122',
+      })).rejects.toThrowError(AuthorizationError);
+    });
+
+    it('should not to throw AuthorizationError when you have access to delete the comment', async () => {
+      // Arrange
+      /** add user */
+      await UsersTableTestHelper.addUser({
+        username: 'dicoding',
+        password: 'secret',
+        fullname: 'dicoding',
+      });
+
+      /** add new thread */
+      await ThreadsTableTestHelper.addNewThread({
+        title: 'sebuah thread',
+        body: 'sebuah body thread',
+      });
+
+      /** add comment */
+      await CommentTableTestHelper.addComment({
+        id: 'comment-123',
+        threadId: 'thread-123',
+      });
+
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+
+      // Action & Assert
+      await expect(commentRepositoryPostgres.verifyCommentAccess({
+        commentId: 'comment-123',
+        owner: 'user-123',
+      })).resolves.not.toThrowError(AuthorizationError);
     });
   });
 });
