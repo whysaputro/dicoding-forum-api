@@ -1,5 +1,4 @@
 /** istanbul ignore file */
-const AddedComment = require('../src/Domains/comments/entities/AddedComment');
 const pool = require('../src/Infrastructures/database/postgres/pool');
 
 const CommentsTableTestHelper = {
