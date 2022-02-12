@@ -4,7 +4,7 @@ const NewThread = require('../../../Domains/threads/entities/NewThread');
 const AddedThread = require('../../../Domains/threads/entities/AddedThread');
 const AuthenticationTokenManager = require('../../security/AuthenticationTokenManager');
 
-describe('AddNewThreadUseCase.js', () => {
+describe('AddNewThreadUseCase', () => {
   it('should orchestrating add thread function correctly', async () => {
     // Arrange
     const useCasePayload = {
