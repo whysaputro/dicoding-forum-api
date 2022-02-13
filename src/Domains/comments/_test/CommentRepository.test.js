@@ -14,5 +14,7 @@ describe('CommentRepository interface', () => {
       .rejects.toThrowError('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
     expect(() => commentRepository.verifyCommentAccess({}))
       .rejects.toThrowError('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+    expect(() => commentRepository.getCommentsByThreadId({}))
+      .rejects.toThrowError('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   });
 });
