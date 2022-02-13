@@ -279,4 +279,51 @@ describe('/threads/{threadId}/comments endpoint', () => {
       expect(responseJson.status).toEqual('success');
     });
   });
+
+  describe('when GET /threads/{threadId}', () => {
+    it('should response with 200 when get thread', async () => {
+      // Arrange
+      const server = await createServer(container);
+      const threadId = 'thread-123';
+
+      await UsersTableTestHelper.addUser({
+        id: 'user-123',
+        username: 'dicoding',
+      });
+
+      await ThreadsTableTestHelper.addNewThread({
+        id: threadId,
+        owner: 'user-123',
+      });
+
+      await CommentTableTestHelper.addComment({
+        id: 'comment-123',
+        owner: 'user-123',
+      });
+
+      await CommentTableTestHelper.addComment({
+        id: 'comment-456',
+        owner: 'user-123',
+      });
+
+      // Action
+      const response = await server.inject({
+        method: 'GET',
+        url: `/threads/${threadId}`,
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      const { data: { thread } } = responseJson;
+      expect(response.statusCode).toEqual(200);
+      expect(typeof responseJson.data).toEqual('object');
+      expect(typeof thread).toEqual('object');
+      expect(thread.id).toBeDefined();
+      expect(thread.title).toBeDefined();
+      expect(thread.body).toBeDefined();
+      expect(thread.date).toBeDefined();
+      expect(thread.username).toBeDefined();
+      expect(Array.isArray(thread.comments)).toBe(true);
+    });
+  });
 });
