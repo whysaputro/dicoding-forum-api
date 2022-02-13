@@ -1,4 +1,3 @@
-const { use } = require('bcrypt/promises');
 const DetailThread = require('../DetailThread');
 
 describe('a Detail Thread entities', () => {
