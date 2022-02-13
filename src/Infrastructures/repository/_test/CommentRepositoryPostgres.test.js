@@ -4,6 +4,7 @@ const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 const NewComment = require('../../../Domains/comments/entities/NewComment');
 const AddedComment = require('../../../Domains/comments/entities/AddedComment');
+const DetailComment = require('../../../Domains/comments/entities/DetailComment');
 const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
 const AuthorizationError = require('../../../Commons/exceptions/AuthorizationError');
 const pool = require('../../database/postgres/pool');
@@ -227,6 +228,42 @@ describe('CommentRepositoryPostgres', () => {
         commentId: 'comment-123',
         owner: 'user-123',
       })).resolves.not.toThrowError(AuthorizationError);
+    });
+  });
+
+  describe('getCommentsByThreadId function', () => {
+    it('should return all comment from a thread correctly', async () => {
+      // Arrange
+      const user = {
+        id: 'user-123', username: 'dicoding',
+      };
+      const newThread = {
+        id: 'thread-123',
+      };
+      const firstComment = {
+        id: 'comment-123', date: '2022', content: 'sebuah comment', owner: 'user-123', isDeleted: false,
+      };
+      const secondComment = {
+        id: 'comment-456', date: '2023', content: 'sebuah comment', owner: 'user-123', isDeleted: false,
+      };
+      /** add user */
+      await UsersTableTestHelper.addUser(user);
+      /** add new thread */
+      await ThreadsTableTestHelper.addNewThread(newThread);
+      /** add first and second comment */
+      await CommentTableTestHelper.addComment(firstComment);
+      await CommentTableTestHelper.addComment(secondComment);
+
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+
+      // Action
+      const comments = await commentRepositoryPostgres.getCommentsByThreadId('thread-123');
+
+      // Assert
+      expect(comments).toEqual([
+        new DetailComment({ ...firstComment, username: 'dicoding' }),
+        new DetailComment({ ...secondComment, username: 'dicoding' }),
+      ]);
     });
   });
 });

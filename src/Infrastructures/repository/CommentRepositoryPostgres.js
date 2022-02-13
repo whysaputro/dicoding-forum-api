@@ -1,5 +1,6 @@
 const CommentRepository = require('../../Domains/comments/CommentRepository');
 const AddedComment = require('../../Domains/comments/entities/AddedComment');
+const DetailComment = require('../../Domains/comments/entities/DetailComment');
 const NotFoundError = require('../../Commons/exceptions/NotFoundError');
 const AuthorizationError = require('../../Commons/exceptions/AuthorizationError');
 
@@ -58,6 +59,26 @@ class CommentRepositoryPostgres extends CommentRepository {
     if (!result.rowCount) {
       throw new AuthorizationError('anda tidak memiliki akses untuk menghapus komen ini');
     }
+  }
+
+  async getCommentsByThreadId(threadId) {
+    const query = {
+      text: `SELECT comments.id,
+             users.username,
+             comments.date,
+             comments.content,
+             comments.is_deleted
+             FROM comments INNER JOIN users
+             ON comments.owner = users.id
+             WHERE comments.thread_id = $1
+             ORDER BY comments.date ASC`,
+      values: [threadId],
+    };
+
+    const result = await this._pool.query(query);
+    return result.rows.map((element) => new DetailComment(
+      { ...element, isDeleted: element.is_deleted },
+    ));
   }
 }
 
