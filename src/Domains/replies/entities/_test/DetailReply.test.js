@@ -20,6 +20,8 @@ describe('a DetailReply entities', () => {
       content: {},
       date: [],
       username: 'dicoding',
+      commentId: 'comment-123',
+      isDeleted: 'yes',
     };
 
     // Action & Assert
@@ -33,11 +35,13 @@ describe('a DetailReply entities', () => {
       content: 'sebuah balasan',
       date: '2022',
       username: 'dicoding',
+      commentId: 'comment-123',
+      isDeleted: true,
     };
 
     // Action
     const {
-      id, content, date, username,
+      id, content, date, username, commentId, isDeleted,
     } = new DetailReply(payload);
 
     // Assert
@@ -45,5 +49,7 @@ describe('a DetailReply entities', () => {
     expect(content).toEqual(payload.content);
     expect(date).toEqual(payload.date);
     expect(username).toEqual(payload.username);
+    expect(commentId).toEqual(payload.commentId);
+    expect(isDeleted).toEqual(payload.isDeleted);
   });
 });

@@ -10,7 +10,7 @@ describe('ReplyRepository interface', () => {
       .rejects.toThrowError('REPLY_REPOSITORY.METHOD_NOT_IMPLEMENTED');
     expect(() => replyRepository.deleteReplyById(''))
       .rejects.toThrowError('REPLY_REPOSITORY.METHOD_NOT_IMPLEMENTED');
-    expect(() => replyRepository.getRepliesByCommentId(''))
+    expect(() => replyRepository.getRepliesByThreadId(''))
       .rejects.toThrowError('REPLY_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   });
 });

@@ -4,6 +4,7 @@ const createServer = require('../createServer');
 const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper');
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 const CommentTableTestHelper = require('../../../../tests/CommentsTableTestHelper');
+const RepliesTableTestHelper = require('../../../../tests/RepliesTableTestHelper');
 const AuthenticationTestHelper = require('../../../../tests/AuthenticationsTestHelper');
 
 describe('/threads/{threadId}/comments endpoint', () => {
@@ -11,6 +12,7 @@ describe('/threads/{threadId}/comments endpoint', () => {
     await ThreadsTableTestHelper.cleanTable();
     await UsersTableTestHelper.cleanTable();
     await CommentTableTestHelper.cleanTable();
+    await RepliesTableTestHelper.cleanTable();
   });
 
   afterAll(async () => {
@@ -306,6 +308,27 @@ describe('/threads/{threadId}/comments endpoint', () => {
         owner: 'user-123',
       });
 
+      await RepliesTableTestHelper.addNewReply({
+        id: 'reply-123',
+        content: 'sebuah balasan',
+        owner: 'user-123',
+        commentId: 'comment-123',
+      });
+
+      await RepliesTableTestHelper.addNewReply({
+        id: 'reply-456',
+        content: 'sebuah balasan',
+        owner: 'user-123',
+        commentId: 'comment-123',
+      });
+
+      await RepliesTableTestHelper.addNewReply({
+        id: 'reply-789',
+        content: 'sebuah balasan',
+        owner: 'user-123',
+        commentId: 'comment-456',
+      });
+
       // Action
       const response = await server.inject({
         method: 'GET',
@@ -324,6 +347,11 @@ describe('/threads/{threadId}/comments endpoint', () => {
       expect(thread.date).toBeDefined();
       expect(thread.username).toBeDefined();
       expect(Array.isArray(thread.comments)).toBe(true);
+      expect(Array.isArray(thread.comments[0].replies));
+      expect(Array.isArray(thread.comments[1].replies));
+      expect(thread.comments[0].replies[0]).toBeDefined();
+      expect(thread.comments[0].replies[1]).toBeDefined();
+      expect(thread.comments[1].replies[0]).toBeDefined();
     });
   });
 });
