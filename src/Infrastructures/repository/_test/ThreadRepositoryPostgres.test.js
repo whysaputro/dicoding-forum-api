@@ -30,7 +30,7 @@ describe('ThreadRepositoryPostgress', () => {
       });
 
       const newThread = new NewThread({
-        title: 'sebuah judul',
+        title: 'sebuah thread',
         body: 'sebuah content',
         owner: 'user-123',
       });
@@ -55,7 +55,7 @@ describe('ThreadRepositoryPostgress', () => {
       });
 
       const newThread = new NewThread({
-        title: 'sebuah judul',
+        title: 'sebuah thread',
         body: 'sebuah content',
         owner: 'user-123',
       });
@@ -68,7 +68,7 @@ describe('ThreadRepositoryPostgress', () => {
       // Assert
       expect(addedThread).toStrictEqual(new AddedThread({
         id: 'thread-123',
-        title: 'sebuah judul',
+        title: 'sebuah thread',
         owner: 'user-123',
       }));
     });

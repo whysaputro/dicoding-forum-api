@@ -14,16 +14,32 @@ class DetailThread {
     this.comments = comments;
   }
 
-  _validatePayload({
-    id, title, body, date, username, comments,
-  }) {
-    if (!id || !title || !body || !date || !username || !comments) {
+  _validatePayload(payload) {
+    if (this._verifyProperty(payload)) {
       throw new Error('DETAIL_THREAD.NOT_CONTAIN_NEEDED_PROPERTY');
     }
 
-    if (typeof id !== 'string' || typeof title !== 'string' || typeof body !== 'string' || typeof date !== 'string' || typeof username !== 'string' || !Array.isArray(comments)) {
+    if (this._verifyDataType(payload)) {
       throw new Error('DETAIL_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATIONS');
     }
+  }
+
+  _verifyProperty({
+    id, title, body, date, username, comments,
+  }) {
+    return (!id || !title || !body || !date || !username || !comments);
+  }
+
+  _verifyDataType({
+    id, title, body, date, username, comments,
+  }) {
+    return (
+      typeof id !== 'string'
+      || typeof title !== 'string'
+      || typeof body !== 'string'
+      || typeof date !== 'string'
+      || typeof username !== 'string'
+      || !Array.isArray(comments));
   }
 }
 

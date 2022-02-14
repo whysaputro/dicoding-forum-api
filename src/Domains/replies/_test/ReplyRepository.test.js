@@ -1,20 +1,20 @@
 const ReplyRepository = require('../ReplyRepository');
 
 describe('ReplyRepository interface', () => {
-  it('should throw error when invoke abstract behaviour', () => {
+  it('should throw error when invoke abstract behaviour', async () => {
     // Arrange
     const replyRepository = new ReplyRepository();
 
     // Action & Assert
-    expect(() => replyRepository.addNewReply({}))
+    await expect(replyRepository.addNewReply({}))
       .rejects.toThrowError('REPLY_REPOSITORY.METHOD_NOT_IMPLEMENTED');
-    expect(() => replyRepository.deleteReplyById(''))
+    await expect(replyRepository.deleteReplyById(''))
       .rejects.toThrowError('REPLY_REPOSITORY.METHOD_NOT_IMPLEMENTED');
-    expect(() => replyRepository.getRepliesByThreadId(''))
+    await expect(replyRepository.getRepliesByThreadId(''))
       .rejects.toThrowError('REPLY_REPOSITORY.METHOD_NOT_IMPLEMENTED');
-    expect(() => replyRepository.verifyReplyIsExist({}))
+    await expect(replyRepository.verifyReplyIsExist({}))
       .rejects.toThrowError('REPLY_REPOSITORY.METHOD_NOT_IMPLEMENTED');
-    expect(() => replyRepository.verifyReplyAccess({}))
+    await expect(replyRepository.verifyReplyAccess({}))
       .rejects.toThrowError('REPLY_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   });
 });

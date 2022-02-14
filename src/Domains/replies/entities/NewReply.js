@@ -9,14 +9,25 @@ class NewReply {
     this.commentId = commentId;
   }
 
-  _validatePayload({ content, owner, commentId }) {
-    if (!content || !owner || !commentId) {
+  _validatePayload(payload) {
+    if (this._verifyProperty(payload)) {
       throw new Error('NEW_REPLY.NOT_CONTAIN_NEEDED_PROPERTY');
     }
 
-    if (typeof content !== 'string' || typeof owner !== 'string' || typeof commentId !== 'string') {
+    if (this._verifyDataType(payload)) {
       throw new Error('NEW_REPLY.NOT_MEET_DATA_TYPE_SPECIFICATION');
     }
+  }
+
+  _verifyProperty({ content, owner, commentId }) {
+    return (!content || !owner || !commentId);
+  }
+
+  _verifyDataType({ content, owner, commentId }) {
+    return (
+      typeof content !== 'string'
+      || typeof owner !== 'string'
+      || typeof commentId !== 'string');
   }
 }
 

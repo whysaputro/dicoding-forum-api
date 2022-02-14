@@ -7,15 +7,23 @@ class UserLogin {
   }
 
   _verifyPayload(payload) {
-    const { username, password } = payload;
-
-    if (!username || !password) {
+    if (this._verifyProperty(payload)) {
       throw new Error('USER_LOGIN.NOT_CONTAIN_NEEDED_PROPERTY');
     }
 
-    if (typeof username !== 'string' || typeof password !== 'string') {
+    if (this._verifyDataType(payload)) {
       throw new Error('USER_LOGIN.NOT_MEET_DATA_TYPE_SPECIFICATION');
     }
+  }
+
+  _verifyProperty({ username, password }) {
+    return (!username || !password);
+  }
+
+  _verifyDataType({ username, password }) {
+    return (
+      typeof username !== 'string'
+      || typeof password !== 'string');
   }
 }
 

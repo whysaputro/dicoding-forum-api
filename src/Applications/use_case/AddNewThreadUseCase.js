@@ -6,10 +6,9 @@ class AddNewThreadUseCase {
     this._authenticationTokenManager = authenticationTokenManager;
   }
 
-  async execute(useCasePayload, accessToken) {
-    await this._authenticationTokenManager.verifyAccessToken(accessToken);
-    const { id: owner } = await this._authenticationTokenManager
-      .decodePayload(accessToken);
+  async execute(useCasePayload, useCaseAuth) {
+    await this._authenticationTokenManager.verifyAccessToken(useCaseAuth);
+    const { id: owner } = await this._authenticationTokenManager.decodePayload(useCaseAuth);
     const newThread = new NewThread({ ...useCasePayload, owner });
     return this._threadRepository.addNewThread(newThread);
   }

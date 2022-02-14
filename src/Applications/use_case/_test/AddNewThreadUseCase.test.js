@@ -8,16 +8,17 @@ describe('AddNewThreadUseCase', () => {
   it('should orchestrating add thread function correctly', async () => {
     // Arrange
     const useCasePayload = {
-      title: 'sebuah judul',
+      title: 'sebuah thread',
       body: 'sebuah content',
+    };
+    const useCaseAuth = {
+      accessToken: 'access_token',
     };
     const expectedAddedThread = new AddedThread({
       id: 'thread-123',
       title: useCasePayload.title,
       owner: 'user-123',
     });
-
-    const accessToken = 'access_token';
 
     /** creating depedency of use case */
     const mockThreadRepository = new ThreadRepository();
@@ -38,18 +39,19 @@ describe('AddNewThreadUseCase', () => {
     });
 
     // Action
-    const addedThread = await addNewThreadUseCase.execute(useCasePayload, accessToken);
+    const addedThread = await addNewThreadUseCase.execute(useCasePayload, useCaseAuth);
 
     // Assert
-    expect(addedThread).toStrictEqual(new AddedThread({
-      id: expectedAddedThread.id,
-      title: expectedAddedThread.title,
-      owner: expectedAddedThread.owner,
-    }));
-    expect(mockAuthenticationTokenManager.decodePayload).toBeCalledWith(accessToken);
+    expect(mockAuthenticationTokenManager.verifyAccessToken).toBeCalledWith(useCaseAuth);
+    expect(mockAuthenticationTokenManager.decodePayload).toBeCalledWith(useCaseAuth);
     expect(mockThreadRepository.addNewThread).toBeCalledWith(new NewThread({
       title: useCasePayload.title,
       body: useCasePayload.body,
+      owner: expectedAddedThread.owner,
+    }));
+    expect(addedThread).toStrictEqual(new AddedThread({
+      id: expectedAddedThread.id,
+      title: expectedAddedThread.title,
       owner: expectedAddedThread.owner,
     }));
   });

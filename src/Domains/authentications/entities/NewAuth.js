@@ -7,15 +7,23 @@ class NewAuth {
   }
 
   _verifyPayload(payload) {
-    const { accessToken, refreshToken } = payload;
-
-    if (!accessToken || !refreshToken) {
+    if (this._verifyProperty(payload)) {
       throw new Error('NEW_AUTH.NOT_CONTAIN_NEEDED_PROPERTY');
     }
 
-    if (typeof accessToken !== 'string' || typeof refreshToken !== 'string') {
+    if (this._verifyDataType(payload)) {
       throw new Error('NEW_AUTH.NOT_MEET_DATA_TYPE_SPECIFICATION');
     }
+  }
+
+  _verifyProperty({ accessToken, refreshToken }) {
+    return (!accessToken || !refreshToken);
+  }
+
+  _verifyDataType({ accessToken, refreshToken }) {
+    return (
+      typeof accessToken !== 'string'
+      || typeof refreshToken !== 'string');
   }
 }
 

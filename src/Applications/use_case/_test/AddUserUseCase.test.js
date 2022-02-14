@@ -43,13 +43,17 @@ describe('AddUserUseCase', () => {
     const registeredUser = await addUserUseCase.execute(useCasePayload);
 
     // Assert
-    expect(registeredUser).toStrictEqual(expectedRegisteredUser);
     expect(mockUserRepository.verifyAvailableUsername).toBeCalledWith(useCasePayload.username);
     expect(mockPasswordHash.hash).toBeCalledWith(useCasePayload.password);
     expect(mockUserRepository.addUser).toBeCalledWith(new RegisterUser({
       username: useCasePayload.username,
       password: 'encrypted_password',
       fullname: useCasePayload.fullname,
+    }));
+    expect(registeredUser).toStrictEqual(new RegisteredUser({
+      id: expectedRegisteredUser.id,
+      username: expectedRegisteredUser.username,
+      fullname: expectedRegisteredUser.fullname,
     }));
   });
 });

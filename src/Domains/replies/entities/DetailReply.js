@@ -14,16 +14,32 @@ class DetailReply {
     this.isDeleted = isDeleted;
   }
 
-  _validatePayload({
-    id, content, date, username, commentId, isDeleted,
-  }) {
-    if (!id || !content || !date || !username || !commentId || isDeleted === 'undefined') {
+  _validatePayload(payload) {
+    if (this._verifyProperty(payload)) {
       throw new Error('DETAIL_REPLY.NOT_CONTAIN_NEEDED_PROPERTY');
     }
 
-    if (typeof id !== 'string' || typeof content !== 'string' || typeof date !== 'string' || typeof username !== 'string' || typeof commentId !== 'string' || typeof isDeleted !== 'boolean') {
+    if (this._verifyDataType(payload)) {
       throw new Error('DETAIL_REPLY.NOT_MEET_DATA_TYPE_SPECIFICATION');
     }
+  }
+
+  _verifyProperty({
+    id, content, date, username, commentId, isDeleted,
+  }) {
+    return (!id || !content || !date || !username || !commentId || isDeleted === 'undefined');
+  }
+
+  _verifyDataType({
+    id, content, date, username, commentId, isDeleted,
+  }) {
+    return (
+      typeof id !== 'string'
+      || typeof content !== 'string'
+      || typeof date !== 'string'
+      || typeof username !== 'string'
+      || typeof commentId !== 'string'
+      || typeof isDeleted !== 'boolean');
   }
 }
 

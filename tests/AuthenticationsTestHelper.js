@@ -1,5 +1,4 @@
-/* instanbul ignore file */
-
+/* istanbul ignore file */
 const AutheticationTestHelper = {
   async getAccessTokenHelper(server) {
     /** add user */

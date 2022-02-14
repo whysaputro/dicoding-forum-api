@@ -9,14 +9,25 @@ class NewThread {
     this.owner = owner;
   }
 
-  _validatePayload({ title, body, owner }) {
-    if (!title || !body || !owner) {
+  _validatePayload(payload) {
+    if (this._verifyProperty(payload)) {
       throw new Error('NEW_THREAD.NOT_CONTAIN_NEEDED_PROPERTY');
     }
 
-    if (typeof title !== 'string' || typeof body !== 'string' || typeof owner !== 'string') {
+    if (this._verifyDataType(payload)) {
       throw new Error('NEW_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION');
     }
+  }
+
+  _verifyProperty({ title, body, owner }) {
+    return (!title || !body || !owner);
+  }
+
+  _verifyDataType({ title, body, owner }) {
+    return (
+      typeof title !== 'string'
+      || typeof body !== 'string'
+      || typeof owner !== 'string');
   }
 }
 

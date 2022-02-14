@@ -9,14 +9,25 @@ class AddedComment {
     this.owner = owner;
   }
 
-  _validatePayload({ id, content, owner }) {
-    if (!id || !content || !owner) {
+  _validatePayload(payload) {
+    if (this._verifyProperty(payload)) {
       throw new Error('ADDED_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY');
     }
 
-    if (typeof id !== 'string' || typeof owner !== 'string' || typeof content !== 'string') {
+    if (this._verifyDataType(payload)) {
       throw new Error('ADDED_COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATIONS');
     }
+  }
+
+  _verifyProperty({ id, content, owner }) {
+    return (!id || !content || !owner);
+  }
+
+  _verifyDataType({ id, content, owner }) {
+    return (
+      typeof id !== 'string'
+      || typeof owner !== 'string'
+      || typeof content !== 'string');
   }
 }
 
