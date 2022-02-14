@@ -303,11 +303,6 @@ describe('/threads/{threadId}/comments endpoint', () => {
         owner: 'user-123',
       });
 
-      await CommentTableTestHelper.addComment({
-        id: 'comment-456',
-        owner: 'user-123',
-      });
-
       await RepliesTableTestHelper.addNewReply({
         id: 'reply-123',
         content: 'sebuah balasan',
@@ -320,13 +315,6 @@ describe('/threads/{threadId}/comments endpoint', () => {
         content: 'sebuah balasan',
         owner: 'user-123',
         commentId: 'comment-123',
-      });
-
-      await RepliesTableTestHelper.addNewReply({
-        id: 'reply-789',
-        content: 'sebuah balasan',
-        owner: 'user-123',
-        commentId: 'comment-456',
       });
 
       // Action
@@ -348,10 +336,8 @@ describe('/threads/{threadId}/comments endpoint', () => {
       expect(thread.username).toBeDefined();
       expect(Array.isArray(thread.comments)).toBe(true);
       expect(Array.isArray(thread.comments[0].replies));
-      expect(Array.isArray(thread.comments[1].replies));
       expect(thread.comments[0].replies[0]).toBeDefined();
       expect(thread.comments[0].replies[1]).toBeDefined();
-      expect(thread.comments[1].replies[0]).toBeDefined();
     });
   });
 });

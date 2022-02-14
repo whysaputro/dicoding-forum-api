@@ -3,6 +3,7 @@ const AddNewCommentUseCase = require('../../../../Applications/use_case/AddNewCo
 const DeleteCommentUseCase = require('../../../../Applications/use_case/DeleteCommentUseCase');
 const GetThreadUseCase = require('../../../../Applications/use_case/GetThreadUseCase');
 const AddNewReplyUseCase = require('../../../../Applications/use_case/AddNewReplyUseCase');
+const DeleteReplyUseCase = require('../../../../Applications/use_case/DeleteReplyUseCase');
 
 class ThreadsHandler {
   constructor(container) {
@@ -13,6 +14,7 @@ class ThreadsHandler {
     this.deleteCommentHandler = this.deleteCommentHandler.bind(this);
     this.getThreadHandler = this.getThreadHandler.bind(this);
     this.postCommentReplyHandler = this.postCommentReplyHandler.bind(this);
+    this.deleteReplyHandler = this.deleteReplyHandler.bind(this);
   }
 
   async postAddNewThreadHandler(request, h) {
@@ -83,6 +85,15 @@ class ThreadsHandler {
 
     response.code(201);
     return response;
+  }
+
+  async deleteReplyHandler(request) {
+    const deleteReplyUseCase = this._container.getInstance(DeleteReplyUseCase.name);
+    await deleteReplyUseCase.execute(request.params, request.auth.credentials);
+
+    return {
+      status: 'success',
+    };
   }
 }
 

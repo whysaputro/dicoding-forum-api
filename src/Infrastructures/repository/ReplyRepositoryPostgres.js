@@ -1,3 +1,5 @@
+const AuthorizationError = require('../../Commons/exceptions/AuthorizationError');
+const NotFoundError = require('../../Commons/exceptions/NotFoundError');
 const AddedReply = require('../../Domains/replies/entities/AddedReply');
 const DetailReply = require('../../Domains/replies/entities/DetailReply');
 const ReplyRepository = require('../../Domains/replies/ReplyRepository');
@@ -37,6 +39,46 @@ class ReplyRepositoryPostgres extends ReplyRepository {
     return result.rows.map((el) => new DetailReply({
       ...el, commentId: el.comment_id, isDeleted: el.is_deleted,
     }));
+  }
+
+  async verifyReplyIsExist({ threadId, commentId, replyId }) {
+    const query = {
+      text: `SELECT 1 FROM replies 
+             INNER JOIN comments 
+             ON replies.comment_id = comments.id
+             INNER JOIN threads
+             ON comments.thread_id = threads.id
+             WHERE threads.id = $1
+             AND comments.id = $2
+             AND replies.id = $3`,
+      values: [threadId, commentId, replyId],
+    };
+
+    const result = await this._pool.query(query);
+    if (!result.rowCount) {
+      throw new NotFoundError('balasan tidak ditemukan');
+    }
+  }
+
+  async verifyReplyAccess({ replyId, owner }) {
+    const query = {
+      text: 'SELECT * FROM replies WHERE id = $1 AND owner = $2',
+      values: [replyId, owner],
+    };
+
+    const result = await this._pool.query(query);
+    if (!result.rowCount) {
+      throw new AuthorizationError('anda tidak memiliki akses untuk menghapus balasan ini');
+    }
+  }
+
+  async deleteReplyById(replyId) {
+    const query = {
+      text: 'UPDATE replies SET is_deleted = true WHERE id = $1',
+      values: [replyId],
+    };
+
+    await this._pool.query(query);
   }
 }
 

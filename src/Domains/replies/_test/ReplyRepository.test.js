@@ -12,5 +12,9 @@ describe('ReplyRepository interface', () => {
       .rejects.toThrowError('REPLY_REPOSITORY.METHOD_NOT_IMPLEMENTED');
     expect(() => replyRepository.getRepliesByThreadId(''))
       .rejects.toThrowError('REPLY_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+    expect(() => replyRepository.verifyReplyIsExist({}))
+      .rejects.toThrowError('REPLY_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+    expect(() => replyRepository.verifyReplyAccess({}))
+      .rejects.toThrowError('REPLY_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   });
 });
