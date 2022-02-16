@@ -10,36 +10,36 @@ class GetThreadUseCase {
     const { threadId } = useCaseParams;
     const thread = await this._threadRepository.getThreadById(threadId);
     const replies = await this._replyRepository.getRepliesByThreadId(threadId);
-    thread.comments = await this._commentRepository.getCommentsByThreadId(threadId);
+    const comments = await this._commentRepository.getCommentsByThreadId(threadId);
 
-    thread.comments = this._checkCommentIsDeleted(thread.comments);
-    thread.comments = this._getRepliesForComment(thread.comments, replies);
+    const filteredComments = this._checkCommentIsDeleted(comments);
+    thread.comments = this._getRepliesForComment(filteredComments, replies);
 
     return thread;
   }
 
   _checkCommentIsDeleted(comments) {
-    for (let i = 0; i < comments.length; i += 1) {
-      comments[i].content = comments[i].isDeleted ? '**komentar telah dihapus**' : comments[i].content;
-      delete comments[i].isDeleted;
-    }
+    comments.forEach((comment) => {
+      comment.content = comment.isDeleted ? '**komentar telah dihapus**' : comment.content;
+      delete comment.isDeleted;
+    });
     return comments;
   }
 
   _getRepliesForComment(comments, replies) {
-    for (let i = 0; i < comments.length; i += 1) {
-      const commentId = comments[i].id;
-      comments[i].replies = replies
-        .filter((reply) => reply.commentId === commentId)
+    comments.forEach((comment) => {
+      const filteredReplies = replies
+        .filter((reply) => reply.commentId === comment.id)
         .map((reply) => {
-          const { ...replyDetail } = reply;
-          replyDetail.content = replyDetail.isDeleted ? '**balasan telah dihapus**' : replyDetail.content;
-          delete replyDetail.commentId;
-          delete replyDetail.isDeleted;
+          reply.content = reply.isDeleted ? '**balasan telah dihapus**' : reply.content;
+          delete reply.commentId;
+          delete reply.isDeleted;
 
-          return replyDetail;
+          return reply;
         });
-    }
+      comment.replies = filteredReplies;
+    });
+
     return comments;
   }
 }
