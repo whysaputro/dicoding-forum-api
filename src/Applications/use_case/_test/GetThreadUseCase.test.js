@@ -114,6 +114,8 @@ describe('GetThreadUseCase', () => {
 
     getThreadUseCase._checkCommentIsDeleted = jest.fn()
       .mockImplementation(() => [filteredCommentA, filteredCommentB]);
+    getThreadUseCase._checkReplyIsDeleted = jest.fn()
+      .mockImplementation(() => replies);
     getThreadUseCase._getRepliesForComment = jest.fn()
       .mockImplementation(() => expectedCommentsAndReplies);
 
@@ -125,6 +127,7 @@ describe('GetThreadUseCase', () => {
     expect(mockCommentRepository.getCommentsByThreadId).toBeCalledWith(useCaseParams.threadId);
     expect(mockReplyRepository.getRepliesByThreadId).toBeCalledWith(useCaseParams.threadId);
     expect(getThreadUseCase._checkCommentIsDeleted).toBeCalledWith(comments);
+    expect(getThreadUseCase._checkReplyIsDeleted).toBeCalledWith(replies);
     expect(getThreadUseCase._getRepliesForComment)
       .toBeCalledWith([filteredCommentA, filteredCommentB], replies);
     expect(detailThread)
