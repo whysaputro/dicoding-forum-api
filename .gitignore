@@ -6,4 +6,4 @@ coverage
 .vscode
 .eslintrc.json
 .env
-forum-api.zip
+*.zip

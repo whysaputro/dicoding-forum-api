@@ -13,11 +13,14 @@ class GetThreadUseCase {
     const comments = await this._commentRepository.getCommentsByThreadId(threadId);
 
     const filteredComments = this._checkCommentIsDeleted(comments);
-    thread.comments = this._getRepliesForComment(filteredComments, replies);
+    const filteredReplies = this._checkReplyIsDeleted(replies);
+
+    thread.comments = this._getRepliesForComment(filteredComments, filteredReplies);
 
     return thread;
   }
 
+  /* istanbul ignore next */
   _checkCommentIsDeleted(comments) {
     comments.forEach((comment) => {
       comment.content = comment.isDeleted ? '**komentar telah dihapus**' : comment.content;
@@ -26,17 +29,26 @@ class GetThreadUseCase {
     return comments;
   }
 
+  /* istanbul ignore next */
+  _checkReplyIsDeleted(replies) {
+    replies.forEach((reply) => {
+      reply.content = reply.isDeleted ? '**balasan telah dihapus**' : reply.content;
+    });
+    return replies;
+  }
+
+  /* istanbul ignore next */
   _getRepliesForComment(comments, replies) {
     comments.forEach((comment) => {
       const filteredReplies = replies
         .filter((reply) => reply.commentId === comment.id)
         .map((reply) => {
-          reply.content = reply.isDeleted ? '**balasan telah dihapus**' : reply.content;
           delete reply.commentId;
           delete reply.isDeleted;
 
           return reply;
         });
+
       comment.replies = filteredReplies;
     });
 
