@@ -2,7 +2,6 @@ const AddNewThreadUseCase = require('../AddNewThreadUseCase');
 const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
 const NewThread = require('../../../Domains/threads/entities/NewThread');
 const AddedThread = require('../../../Domains/threads/entities/AddedThread');
-const AuthenticationTokenManager = require('../../security/AuthenticationTokenManager');
 
 describe('AddNewThreadUseCase', () => {
   it('should orchestrating add thread function correctly', async () => {
@@ -11,9 +10,9 @@ describe('AddNewThreadUseCase', () => {
       title: 'sebuah thread',
       body: 'sebuah content',
     };
-    const useCaseAuth = {
-      accessToken: 'access_token',
-    };
+
+    const userId = 'user-123';
+
     const expectedAddedThread = new AddedThread({
       id: 'thread-123',
       title: useCasePayload.title,
@@ -22,37 +21,29 @@ describe('AddNewThreadUseCase', () => {
 
     /** creating depedency of use case */
     const mockThreadRepository = new ThreadRepository();
-    const mockAuthenticationTokenManager = new AuthenticationTokenManager();
 
     /** mocking needed function */
     mockThreadRepository.addNewThread = jest.fn()
-      .mockImplementation(() => Promise.resolve(expectedAddedThread));
-    mockAuthenticationTokenManager.verifyAccessToken = jest.fn()
-      .mockImplementation(() => Promise.resolve());
-    mockAuthenticationTokenManager.decodePayload = jest.fn()
-      .mockImplementation(() => Promise.resolve({ id: 'user-123' }));
+      .mockImplementation(() => Promise.resolve(new AddedThread({
+        id: 'thread-123',
+        title: useCasePayload.title,
+        owner: 'user-123',
+      })));
 
     /** create use case instance */
     const addNewThreadUseCase = new AddNewThreadUseCase({
       threadRepository: mockThreadRepository,
-      authenticationTokenManager: mockAuthenticationTokenManager,
     });
 
     // Action
-    const addedThread = await addNewThreadUseCase.execute(useCasePayload, useCaseAuth);
+    const addedThread = await addNewThreadUseCase.execute(useCasePayload, userId);
 
     // Assert
-    expect(mockAuthenticationTokenManager.verifyAccessToken).toBeCalledWith(useCaseAuth);
-    expect(mockAuthenticationTokenManager.decodePayload).toBeCalledWith(useCaseAuth);
     expect(mockThreadRepository.addNewThread).toBeCalledWith(new NewThread({
       title: useCasePayload.title,
       body: useCasePayload.body,
-      owner: expectedAddedThread.owner,
+      owner: userId,
     }));
-    expect(addedThread).toStrictEqual(new AddedThread({
-      id: expectedAddedThread.id,
-      title: expectedAddedThread.title,
-      owner: expectedAddedThread.owner,
-    }));
+    expect(addedThread).toStrictEqual(expectedAddedThread);
   });
 });

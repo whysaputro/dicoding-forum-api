@@ -1,20 +1,15 @@
 const NewReply = require('../../Domains/replies/entities/NewReply');
 
 class AddNewReplyUseCase {
-  constructor({ commentRepository, replyRepository, authenticationTokenManager }) {
+  constructor({ commentRepository, replyRepository }) {
     this._commentRepository = commentRepository;
     this._replyRepository = replyRepository;
-    this._authenticationTokenManager = authenticationTokenManager;
   }
 
-  async execute(useCasePayload, useCaseParams, accessToken) {
+  async execute(useCasePayload, useCaseParams, userId) {
     const { threadId, commentId } = useCaseParams;
-    await this._authenticationTokenManager.verifyAccessToken(accessToken);
-    const { id: owner } = await this._authenticationTokenManager.decodePayload(accessToken);
     await this._commentRepository.verifyCommentIsExist({ commentId, threadId });
-    const newReply = new NewReply({
-      ...useCasePayload, owner, commentId,
-    });
+    const newReply = new NewReply({ ...useCasePayload, owner: userId, commentId });
     return this._replyRepository.addNewReply(newReply);
   }
 }

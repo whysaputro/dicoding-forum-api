@@ -18,9 +18,9 @@ class ThreadsHandler {
   }
 
   async postAddNewThreadHandler(request, h) {
+    const { id: userId } = request.auth.credentials;
     const addNewThreadUseCase = this._container.getInstance(AddNewThreadUseCase.name);
-    const addedThread = await addNewThreadUseCase
-      .execute(request.payload, request.auth.credentials);
+    const addedThread = await addNewThreadUseCase.execute(request.payload, userId);
 
     const response = h.response({
       status: 'success',
@@ -34,10 +34,10 @@ class ThreadsHandler {
   }
 
   async postAddNewCommentHandler(request, h) {
-    const { threadId } = request.params;
+    const { id: userId } = request.auth.credentials;
     const addNewCommentUseCase = this._container.getInstance(AddNewCommentUseCase.name);
     const addedComment = await addNewCommentUseCase
-      .execute(request.payload, threadId, request.auth.credentials);
+      .execute(request.payload, request.params, userId);
 
     const response = h.response({
       status: 'success',
@@ -51,8 +51,9 @@ class ThreadsHandler {
   }
 
   async deleteCommentHandler(request) {
+    const { id: userId } = request.auth.credentials;
     const deleteCommentUseCase = this._container.getInstance(DeleteCommentUseCase.name);
-    await deleteCommentUseCase.execute(request.params, request.auth.credentials);
+    await deleteCommentUseCase.execute(request.params, userId);
 
     return {
       status: 'success',
@@ -72,9 +73,10 @@ class ThreadsHandler {
   }
 
   async postCommentReplyHandler(request, h) {
+    const { id: userId } = request.auth.credentials;
     const addNewReplyUseCase = this._container.getInstance(AddNewReplyUseCase.name);
     const addedReply = await addNewReplyUseCase
-      .execute(request.payload, request.params, request.auth.credentials);
+      .execute(request.payload, request.params, userId);
 
     const response = h.response({
       status: 'success',
@@ -88,8 +90,9 @@ class ThreadsHandler {
   }
 
   async deleteReplyHandler(request) {
+    const { id: userId } = request.auth.credentials;
     const deleteReplyUseCase = this._container.getInstance(DeleteReplyUseCase.name);
-    await deleteReplyUseCase.execute(request.params, request.auth.credentials);
+    await deleteReplyUseCase.execute(request.params, userId);
 
     return {
       status: 'success',

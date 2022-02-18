@@ -3,7 +3,6 @@ const AddedReply = require('../../../Domains/replies/entities/AddedReply');
 const NewReply = require('../../../Domains/replies/entities/NewReply');
 const CommentRepository = require('../../../Domains/comments/CommentRepository');
 const ReplyRepository = require('../../../Domains/replies/ReplyRepository');
-const AuthenticationTokenManager = require('../../security/AuthenticationTokenManager');
 
 describe('AddNewReplyUseCase', () => {
   it('should orchestrating AddNewReply action correctly', async () => {
@@ -17,7 +16,6 @@ describe('AddNewReplyUseCase', () => {
       commentId: 'comment-123',
     };
 
-    const accessToken = 'access_token';
     const userId = 'user-123';
 
     const expectedAddedReply = new AddedReply({
@@ -29,31 +27,27 @@ describe('AddNewReplyUseCase', () => {
     /** create dependency use case */
     const mockCommentRepository = new CommentRepository();
     const mockReplyRepository = new ReplyRepository();
-    const mockAuthenticationTokenManager = new AuthenticationTokenManager();
 
     /** mocking */
-    mockAuthenticationTokenManager.verifyAccessToken = jest.fn()
-      .mockImplementation(() => Promise.resolve());
-    mockAuthenticationTokenManager.decodePayload = jest.fn()
-      .mockImplementation(() => Promise.resolve({ id: 'user-123' }));
     mockCommentRepository.verifyCommentIsExist = jest.fn()
       .mockImplementation(() => Promise.resolve());
     mockReplyRepository.addNewReply = jest.fn()
-      .mockImplementation(() => Promise.resolve(expectedAddedReply));
+      .mockImplementation(() => Promise.resolve(new AddedReply({
+        id: 'reply-123',
+        content: useCasePayload.content,
+        owner: userId,
+      })));
 
     /** creating use case instance */
     const addNewReplyUseCase = new AddNewReplyUseCase({
       commentRepository: mockCommentRepository,
       replyRepository: mockReplyRepository,
-      authenticationTokenManager: mockAuthenticationTokenManager,
     });
 
     // Acction
-    const addedReply = await addNewReplyUseCase.execute(useCasePayload, useCaseParams, accessToken);
+    const addedReply = await addNewReplyUseCase.execute(useCasePayload, useCaseParams, userId);
 
     // Assert
-    expect(mockAuthenticationTokenManager.verifyAccessToken).toBeCalledWith(accessToken);
-    expect(mockAuthenticationTokenManager.decodePayload).toBeCalledWith(accessToken);
     expect(mockCommentRepository.verifyCommentIsExist).toBeCalledWith({
       commentId: useCaseParams.commentId, threadId: useCaseParams.threadId,
     });
@@ -62,10 +56,6 @@ describe('AddNewReplyUseCase', () => {
       owner: userId,
       commentId: useCaseParams.commentId,
     }));
-    expect(addedReply).toStrictEqual(new AddedReply({
-      id: expectedAddedReply.id,
-      content: expectedAddedReply.content,
-      owner: expectedAddedReply.owner,
-    }));
+    expect(addedReply).toStrictEqual(expectedAddedReply);
   });
 });

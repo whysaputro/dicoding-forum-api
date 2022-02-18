@@ -1,6 +1,5 @@
 const DeleteReplyUseCase = require('../DeleteReplyUseCase');
 const ReplyRepository = require('../../../Domains/replies/ReplyRepository');
-const AuthenticationTokenManager = require('../../security/AuthenticationTokenManager');
 
 describe('DeleteReplyUseCase', () => {
   it('should orchestrating delete reply correctly', async () => {
@@ -10,18 +9,13 @@ describe('DeleteReplyUseCase', () => {
       threadId: 'thread-123',
       replyId: 'reply-123',
     };
-    const accessToken = 'access_token';
-    const userIdFromAccessToken = 'user-123';
+
+    const userId = 'user-123';
 
     /** create use case depedency */
-    const mockAuthenticationTokenManager = new AuthenticationTokenManager();
     const mockReplyRepository = new ReplyRepository();
 
     /** mocking */
-    mockAuthenticationTokenManager.verifyAccessToken = jest.fn()
-      .mockImplementation(() => Promise.resolve());
-    mockAuthenticationTokenManager.decodePayload = jest.fn()
-      .mockImplementation(() => Promise.resolve({ id: 'user-123' }));
     mockReplyRepository.verifyReplyIsExist = jest.fn()
       .mockImplementation(() => Promise.resolve());
     mockReplyRepository.verifyReplyAccess = jest.fn()
@@ -32,15 +26,12 @@ describe('DeleteReplyUseCase', () => {
     /** create use case instance */
     const deleteReplyUseCase = new DeleteReplyUseCase({
       replyRepository: mockReplyRepository,
-      authenticationTokenManager: mockAuthenticationTokenManager,
     });
 
     // Action
-    await deleteReplyUseCase.execute(useCaseParams, accessToken);
+    await deleteReplyUseCase.execute(useCaseParams, userId);
 
     // Assert
-    expect(mockAuthenticationTokenManager.verifyAccessToken).toBeCalledWith(accessToken);
-    expect(mockAuthenticationTokenManager.decodePayload).toBeCalledWith(accessToken);
     expect(mockReplyRepository.verifyReplyIsExist).toBeCalledWith({
       threadId: useCaseParams.threadId,
       commentId: useCaseParams.commentId,
@@ -48,7 +39,7 @@ describe('DeleteReplyUseCase', () => {
     });
     expect(mockReplyRepository.verifyReplyAccess).toBeCalledWith({
       replyId: useCaseParams.replyId,
-      owner: userIdFromAccessToken,
+      owner: userId,
     });
     expect(mockReplyRepository.deleteReplyById).toBeCalledWith(useCaseParams.replyId);
   });
