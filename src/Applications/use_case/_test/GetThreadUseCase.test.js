@@ -37,7 +37,7 @@ describe('GetThreadUseCase', () => {
         username: 'johndoe',
         date: '2022',
         content: 'sebuah comment',
-        isDeleted: false,
+        isDeleted: true,
       }),
     ];
 
@@ -48,7 +48,7 @@ describe('GetThreadUseCase', () => {
         date: '2020',
         username: 'dicoding',
         commentId: 'comment-123',
-        isDeleted: false,
+        isDeleted: true,
       }),
 
       new DetailReply({
@@ -91,8 +91,18 @@ describe('GetThreadUseCase', () => {
     });
 
     // filter comments and deleting isDeleted
-    const { isDeleted: isDeletedCommentA, ...filteredCommentA } = comments[0];
-    const { isDeleted: isDeletedCommentB, ...filteredCommentB } = comments[1];
+    const {
+      isDeleted: isDeletedCommentA,
+      ...filteredCommentA
+    } = comments[0];
+
+    const {
+      isDeleted: isDeletedCommentB,
+      ...filteredCommentB
+    } = comments[1];
+
+    // change content property filteredCommentB to **komentar telah dihapus**
+    filteredCommentB.content = '**komentar telah dihapus**';
 
     // filter replies and deleting isDeleted
     const {
@@ -100,6 +110,9 @@ describe('GetThreadUseCase', () => {
       isDeleted: isDeletedReplyA,
       ...filteredReplyA
     } = replies[0];
+
+    // change content property filteredReplyA to **balasan telah dihapus**
+    filteredReplyA.content = '**balasan telah dihapus**';
 
     const {
       commentId: commentIdReplyB,
@@ -112,13 +125,6 @@ describe('GetThreadUseCase', () => {
       { ...filteredCommentB, replies: [filteredReplyB] },
     ];
 
-    getThreadUseCase._checkCommentIsDeleted = jest.fn()
-      .mockImplementation(() => [filteredCommentA, filteredCommentB]);
-    getThreadUseCase._checkReplyIsDeleted = jest.fn()
-      .mockImplementation(() => replies);
-    getThreadUseCase._getRepliesForComment = jest.fn()
-      .mockImplementation(() => expectedCommentsAndReplies);
-
     // Action
     const detailThread = await getThreadUseCase.execute(useCaseParams);
 
@@ -126,10 +132,6 @@ describe('GetThreadUseCase', () => {
     expect(mockThreadRepository.getThreadById).toBeCalledWith(useCaseParams.threadId);
     expect(mockCommentRepository.getCommentsByThreadId).toBeCalledWith(useCaseParams.threadId);
     expect(mockReplyRepository.getRepliesByThreadId).toBeCalledWith(useCaseParams.threadId);
-    expect(getThreadUseCase._checkCommentIsDeleted).toBeCalledWith(comments);
-    expect(getThreadUseCase._checkReplyIsDeleted).toBeCalledWith(replies);
-    expect(getThreadUseCase._getRepliesForComment)
-      .toBeCalledWith([filteredCommentA, filteredCommentB], replies);
     expect(detailThread)
       .toEqual(new DetailThread({ ...expectedDetailThread, comments: expectedCommentsAndReplies }));
   });
