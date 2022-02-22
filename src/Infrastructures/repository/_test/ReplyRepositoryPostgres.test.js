@@ -134,7 +134,6 @@ describe('ReplyRepositoryPostgres', () => {
           username: 'dicoding',
           commentId: 'comment-123',
           date: '2022',
-          isDeleted: false,
         },
 
         {
@@ -143,7 +142,6 @@ describe('ReplyRepositoryPostgres', () => {
           username: 'johndoe',
           commentId: 'comment-456',
           date: '2023',
-          isDeleted: false,
         },
       ];
 

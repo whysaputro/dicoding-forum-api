@@ -39,7 +39,7 @@ describe('a DetailComment entities', () => {
 
     // Action
     const {
-      id, username, date, content, isDeleted,
+      id, username, date, content,
     } = new DetailComment(payload);
 
     // Assert
@@ -47,6 +47,5 @@ describe('a DetailComment entities', () => {
     expect(username).toEqual(payload.username);
     expect(date).toEqual(payload.date);
     expect(content).toEqual(payload.content);
-    expect(isDeleted).toEqual(false);
   });
 });

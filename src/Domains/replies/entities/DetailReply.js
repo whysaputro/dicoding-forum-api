@@ -7,11 +7,10 @@ class DetailReply {
     } = payload;
 
     this.id = id;
-    this.content = content;
+    this.content = isDeleted ? '**balasan telah dihapus**' : content;
     this.username = username;
     this.commentId = commentId;
     this.date = date;
-    this.isDeleted = isDeleted;
   }
 
   _validatePayload(payload) {

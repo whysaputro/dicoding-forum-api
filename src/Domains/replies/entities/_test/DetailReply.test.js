@@ -41,15 +41,14 @@ describe('a DetailReply entities', () => {
 
     // Action
     const {
-      id, content, date, username, commentId, isDeleted,
+      id, content, date, username, commentId,
     } = new DetailReply(payload);
 
     // Assert
     expect(id).toEqual(payload.id);
-    expect(content).toEqual(payload.content);
+    expect(content).toEqual('**balasan telah dihapus**');
     expect(date).toEqual(payload.date);
     expect(username).toEqual(payload.username);
     expect(commentId).toEqual(payload.commentId);
-    expect(isDeleted).toEqual(payload.isDeleted);
   });
 });

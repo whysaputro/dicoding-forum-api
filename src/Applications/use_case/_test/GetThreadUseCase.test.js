@@ -90,39 +90,20 @@ describe('GetThreadUseCase', () => {
       replyRepository: mockReplyRepository,
     });
 
-    // filter comments and deleting isDeleted
-    const {
-      isDeleted: isDeletedCommentA,
-      ...filteredCommentA
-    } = comments[0];
-
-    const {
-      isDeleted: isDeletedCommentB,
-      ...filteredCommentB
-    } = comments[1];
-
-    // change content property filteredCommentB to **komentar telah dihapus**
-    filteredCommentB.content = '**komentar telah dihapus**';
-
-    // filter replies and deleting isDeleted
+    // deleting commentId property
     const {
       commentId: commentIdReplyA,
-      isDeleted: isDeletedReplyA,
       ...filteredReplyA
     } = replies[0];
 
-    // change content property filteredReplyA to **balasan telah dihapus**
-    filteredReplyA.content = '**balasan telah dihapus**';
-
     const {
       commentId: commentIdReplyB,
-      isDeleted: isDeletedReplyB,
       ...filteredReplyB
     } = replies[1];
 
     const expectedCommentsAndReplies = [
-      { ...filteredCommentA, replies: [filteredReplyA] },
-      { ...filteredCommentB, replies: [filteredReplyB] },
+      { ...comments[0], replies: [filteredReplyA] },
+      { ...comments[1], replies: [filteredReplyB] },
     ];
 
     // Action

@@ -1,5 +1,3 @@
-/* eslint-disable camelcase */
-
 exports.up = (pgm) => {
   pgm.createTable('comments', {
     id: {
@@ -21,6 +19,7 @@ exports.up = (pgm) => {
     date: {
       type: 'TEXT',
       notNull: true,
+      default: pgm.func('current_timestamp'),
     },
   });
 

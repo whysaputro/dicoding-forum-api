@@ -9,8 +9,7 @@ class DetailComment {
     this.id = id;
     this.username = username;
     this.date = date;
-    this.content = content;
-    this.isDeleted = isDeleted;
+    this.content = isDeleted ? '**komentar telah dihapus**' : content;
   }
 
   _validatePayload(payload) {
