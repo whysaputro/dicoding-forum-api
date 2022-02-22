@@ -61,14 +61,43 @@ describe('GetThreadUseCase', () => {
       }),
     ];
 
-    const expectedDetailThread = new DetailThread({
+    const expectedCommentsAndReplies = {
       id: 'thread-123',
       title: 'sebuah thread',
-      body: 'sebuah body thread',
-      date: '2023',
       username: 'dicoding',
-      comments: [],
-    });
+      date: '2023',
+      body: 'sebuah body thread',
+      comments: [
+        {
+          content: 'sebuah comment',
+          date: '2022',
+          id: 'comment-123',
+          username: 'dicoding',
+          replies: [
+            {
+              content: '**balasan telah dihapus**',
+              date: '2020',
+              id: 'reply-123',
+              username: 'dicoding',
+            },
+          ],
+        },
+        {
+          content: '**komentar telah dihapus**',
+          date: '2022',
+          id: 'comment-456',
+          username: 'johndoe',
+          replies: [
+            {
+              content: 'sebuah balasan',
+              date: '2023',
+              id: 'reply-456',
+              username: 'johndoe',
+            },
+          ],
+        },
+      ],
+    };
 
     // Create dependency of use case
     const mockThreadRepository = new ThreadRepository();
@@ -90,22 +119,6 @@ describe('GetThreadUseCase', () => {
       replyRepository: mockReplyRepository,
     });
 
-    // deleting commentId property
-    const {
-      commentId: commentIdReplyA,
-      ...filteredReplyA
-    } = replies[0];
-
-    const {
-      commentId: commentIdReplyB,
-      ...filteredReplyB
-    } = replies[1];
-
-    const expectedCommentsAndReplies = [
-      { ...comments[0], replies: [filteredReplyA] },
-      { ...comments[1], replies: [filteredReplyB] },
-    ];
-
     // Action
     const detailThread = await getThreadUseCase.execute(useCaseParams);
 
@@ -113,7 +126,6 @@ describe('GetThreadUseCase', () => {
     expect(mockThreadRepository.getThreadById).toBeCalledWith(useCaseParams.threadId);
     expect(mockCommentRepository.getCommentsByThreadId).toBeCalledWith(useCaseParams.threadId);
     expect(mockReplyRepository.getRepliesByThreadId).toBeCalledWith(useCaseParams.threadId);
-    expect(detailThread)
-      .toEqual(new DetailThread({ ...expectedDetailThread, comments: expectedCommentsAndReplies }));
+    expect(detailThread).toEqual(expectedCommentsAndReplies);
   });
 });
