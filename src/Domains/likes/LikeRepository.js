@@ -1,13 +1,13 @@
 class LikeRepository {
-  async verifyAlbumIsLikedOrNot({ commentId, userId }) {
+  async verifyCommentIsLikedOrNot({ commentId, owner }) {
     throw new Error('LIKE_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 
-  async addLikeToComment({ commentId, userId }) {
+  async addLikeToComment({ commentId, owner }) {
     throw new Error('LIKE_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 
-  async removeLikeToComment({ commentId, userId }) {
+  async removeLikeToComment({ commentId, owner }) {
     throw new Error('LIKE_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 }
