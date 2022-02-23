@@ -138,7 +138,7 @@ describe('LikeRepositoryPostgres', () => {
       const likeCount = await likeRepositoryPostgres.getLikeCountByCommentId(commentId);
 
       // Assert
-      expect(likeCount).toEqual('3');
+      expect(likeCount).toEqual(3);
     });
   });
 });
