@@ -6,6 +6,11 @@ describe('LikeRepository interface', () => {
     const likeRepository = new LikeRepository();
 
     // Action and Assert
-    await expect(likeRepository.updateLike({})).rejects.toThrowError('LIKE_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+    await expect(likeRepository.verifyAlbumIsLikedOrNot({}))
+      .rejects.toThrowError('LIKE_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+    await expect(likeRepository.addLikeToComment({}))
+      .rejects.toThrowError('LIKE_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+    await expect(likeRepository.removeLikeToComment({}))
+      .rejects.toThrowError('LIKE_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   });
 });
