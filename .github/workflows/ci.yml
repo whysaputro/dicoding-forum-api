@@ -18,13 +18,14 @@ jobs:
           POSTGRES_USER: ${{ secrets.PGUSER_TEST }}
           POSTGRES_PASSWORD: ${{ secrets.PGPASSWORD_TEST }}
           POSTGRES_DB: ${{ secrets.PGDATABASE_TEST }}
+          POSTGRES_PORT: ${{ secrets.PGPORT_TEST }}
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
         ports:
-          - 5432:${{ secrets.PGPORT_TEST }}
+          - 5432:5432
 
     steps:
       - uses: actions/checkout@v2
