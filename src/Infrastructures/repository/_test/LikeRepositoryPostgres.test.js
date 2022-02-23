@@ -108,4 +108,37 @@ describe('LikeRepositoryPostgres', () => {
       expect(like).toHaveLength(0);
     });
   });
+
+  describe('getLikeCountByCommentId', () => {
+    it('should counting like by commentId correctly', async () => {
+      // Arrange
+      await LikesTableTestHelper.addNewLike({
+        id: 'like-123',
+        commentId: 'comment-123',
+        owner: 'user-123',
+      });
+
+      await LikesTableTestHelper.addNewLike({
+        id: 'like-456',
+        commentId: 'comment-123',
+        owner: 'user-123',
+      });
+
+      await LikesTableTestHelper.addNewLike({
+        id: 'like-789',
+        commentId: 'comment-123',
+        owner: 'user-123',
+      });
+
+      const commentId = 'comment-123';
+
+      const likeRepositoryPostgres = new LikeRepositoryPostgres(pool, {});
+
+      // Action
+      const likeCount = await likeRepositoryPostgres.getLikeCountByCommentId(commentId);
+
+      // Assert
+      expect(likeCount).toEqual('3');
+    });
+  });
 });
