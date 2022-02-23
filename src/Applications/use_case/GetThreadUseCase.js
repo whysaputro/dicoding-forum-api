@@ -1,9 +1,12 @@
 /* eslint-disable no-param-reassign */
 class GetThreadUseCase {
-  constructor({ threadRepository, commentRepository, replyRepository }) {
+  constructor({
+    threadRepository, commentRepository, replyRepository, likeRepository,
+  }) {
     this._threadRepository = threadRepository;
     this._commentRepository = commentRepository;
     this._replyRepository = replyRepository;
+    this._likeRepository = likeRepository;
   }
 
   async execute(useCaseParams) {
@@ -12,7 +15,8 @@ class GetThreadUseCase {
     const replies = await this._replyRepository.getRepliesByThreadId(threadId);
     const comments = await this._commentRepository.getCommentsByThreadId(threadId);
 
-    thread.comments = this._getRepliesForComment(comments, replies);
+    thread.comments = await this._getLikeCountForComment(comments);
+    thread.comments = this._getRepliesForComment(thread.comments, replies);
 
     return thread;
   }
@@ -30,6 +34,15 @@ class GetThreadUseCase {
 
       comment.replies = filteredReplies;
     });
+
+    return comments;
+  }
+
+  /* istanbul ignore next */
+  async _getLikeCountForComment(comments) {
+    await Promise.all(comments.map(async (comment) => {
+      comment.likeCount = await this._likeRepository.getLikeCountByCommentId(comment.id);
+    }));
 
     return comments;
   }

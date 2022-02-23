@@ -6,6 +6,7 @@ const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 const CommentTableTestHelper = require('../../../../tests/CommentsTableTestHelper');
 const RepliesTableTestHelper = require('../../../../tests/RepliesTableTestHelper');
 const AuthenticationTestHelper = require('../../../../tests/AuthenticationsTestHelper');
+const LikesTableTestHelper = require('../../../../tests/LikesTableTestHelper');
 
 describe('/threads/{threadId}/comments endpoint', () => {
   afterEach(async () => {
@@ -13,6 +14,7 @@ describe('/threads/{threadId}/comments endpoint', () => {
     await UsersTableTestHelper.cleanTable();
     await CommentTableTestHelper.cleanTable();
     await RepliesTableTestHelper.cleanTable();
+    await LikesTableTestHelper.cleanTable();
   });
 
   afterAll(async () => {
@@ -317,6 +319,18 @@ describe('/threads/{threadId}/comments endpoint', () => {
         commentId: 'comment-123',
       });
 
+      await LikesTableTestHelper.addNewLike({
+        id: 'like-123',
+        commentId: 'comment-123',
+        owner: 'user-123',
+      });
+
+      await LikesTableTestHelper.addNewLike({
+        id: 'like-456',
+        commentId: 'comment-123',
+        owner: 'user-123',
+      });
+
       // Action
       const response = await server.inject({
         method: 'GET',
@@ -338,6 +352,7 @@ describe('/threads/{threadId}/comments endpoint', () => {
       expect(Array.isArray(thread.comments[0].replies));
       expect(thread.comments[0].replies[0]).toBeDefined();
       expect(thread.comments[0].replies[1]).toBeDefined();
+      expect(thread.comments[0].likeCount).toEqual(2);
     });
   });
 
